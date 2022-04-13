@@ -10,7 +10,7 @@ namespace HomeApi.Data.Models
         public DateTime AddDate { get; set; } = DateTime.Now;
         public string Name { get; set; }
         public int Area { get; set; }
-        public bool GasConnected { get; set; }
+        public Nullable<bool> GasConnected { get; set; }
         public int Voltage { get; set; }
     }
 }

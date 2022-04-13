@@ -52,10 +52,13 @@ namespace HomeApi.Data.Repos
         /// </summary>
         public async Task UpdateRoom(Room room, UpdateRoomQuery query)
         {
+            if (query.NewName != "")
+                room.Name = query.NewName;
+
             if (query.NewArea != 0)
                 room.Area = query.NewArea;
 
-            if (query.NewGasConnected != false)
+            if (query.NewGasConnected.HasValue)
                 room.GasConnected = query.NewGasConnected;
 
             if (query.NewVoltage != 0)

@@ -15,6 +15,7 @@ namespace HomeApi.Contracts.Validation
     {
         public UpdateRoomRequestValidator()
         {
+            RuleFor(x => x.NewName).NotEmpty();
             RuleFor(x => x.NewArea).NotEmpty();
             RuleFor(x => x.NewVoltage).NotEmpty();
             RuleFor(x => x.NewGasConnected).NotEmpty();

@@ -4,6 +4,7 @@ using AutoMapper;
 using HomeApi.Contracts.Models.Devices;
 using HomeApi.Contracts.Models.Rooms;
 using HomeApi.Data.Models;
+using HomeApi.Data.Queries;
 using HomeApi.Data.Repos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,13 +17,12 @@ namespace HomeApi.Controllers
     [Route("[controller]")]
     public class RoomsController : ControllerBase
     {
-        private IRoomRepository _repository;
-        private readonly IRoomRepository _rooms;
+        private IRoomRepository _rooms;
         private IMapper _mapper;
         
-        public RoomsController(IRoomRepository repository, IMapper mapper)
+        public RoomsController(IRoomRepository rooms, IMapper mapper)
         {
-            _repository = repository;
+            _rooms = rooms;
             _mapper = mapper;
         }
 
@@ -50,20 +50,23 @@ namespace HomeApi.Controllers
         /// </summary>
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRoomRequest request)
+        public async Task<IActionResult> Update(
+            [FromRoute] Guid id, 
+            [FromBody] UpdateRoomRequest request)
         {
             var room = await _rooms.GetRoomById(id);
             if (room == null)
                 return StatusCode(400, $"Ошибка: Комната с идентификатором {id} не существует.");
 
             await _rooms.UpdateRoom(room, new UpdateRoomQuery(
+                request.NewName,
                 request.NewArea,
                 request.NewGasConnected,
                 request.NewVoltage)
             );
 
             return StatusCode(200,
-                $"Комната обновлена! " +
+                $"Комната {room.Name} обновлена! " +
                 $"Площадь - {room.Area}, " +
                 $"Газопровод - {room.GasConnected}, " +
                 $"Напряжение сети - {room.Voltage}");
@@ -76,11 +79,11 @@ namespace HomeApi.Controllers
         [Route("")] 
         public async Task<IActionResult> Add([FromBody] AddRoomRequest request)
         {
-            var existingRoom = await _repository.GetRoomByName(request.Name);
+            var existingRoom = await _rooms.GetRoomByName(request.Name);
             if (existingRoom == null)
             {
                 var newRoom = _mapper.Map<AddRoomRequest, Room>(request);
-                await _repository.AddRoom(newRoom);
+                await _rooms.AddRoom(newRoom);
                 return StatusCode(201, $"Комната {request.Name} добавлена!");
             }
             

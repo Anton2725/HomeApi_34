@@ -9,19 +9,20 @@ namespace HomeApi.Data.Queries
     public class UpdateRoomQuery
     {
         public UpdateRoomQuery(
+            string newName = "",
             int newArea = 0,
-            bool newGasConnected = false,
+            Nullable<bool> newGasConnected = null,
             int newVoltage = 0)
         {
+            NewName = newName;
             NewArea = newArea;
             NewGasConnected = newGasConnected;
             NewVoltage = newVoltage;
         }
 
+        public string NewName { get; }
         public int NewArea { get; }
-
-        public bool NewGasConnected { get; }
-
+        public Nullable<bool> NewGasConnected { get; }
         public int NewVoltage { get; }
     }
 }
